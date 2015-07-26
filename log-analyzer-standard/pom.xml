@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.truward.brikar.log</groupId>
+    <artifactId>brikar-log-analyzer</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>log-analyzer-standard</artifactId>
+  <packaging>jar</packaging>
+  <name>Log Analyzer Standard Implementation</name>
+
+  <properties>
+    <launcher.mainClass>todo.impl</launcher.mainClass>
+  </properties>
+
+  <dependencies>
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+    </dependency>
+
+    <!-- Brikar Logging Constants -->
+    <dependency>
+      <groupId>com.truward.brikar</groupId>
+      <artifactId>brikar-common</artifactId>
+    </dependency>
+
+    <!-- Camel Core -->
+    <dependency>
+      <groupId>com.truward.brikar.log</groupId>
+      <artifactId>log-analyzer-core</artifactId>
+    </dependency>
+
+    <!-- FindBugs annotations -->
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>2.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>${camel.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <!-- CLI execution -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <configuration>
+          <mainClass>${launcher.mainClass}</mainClass>
+        </configuration>
+      </plugin>
+
+      <!-- Logger configuration for tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.13</version>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>java.util.logging.config.file</name>
+              <value>${project.build.directory}/test-classes/logging.properties</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+
