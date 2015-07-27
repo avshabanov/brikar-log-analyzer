@@ -29,7 +29,7 @@ public final class LogMessageProcessor implements Processor {
           "(\\p{Upper}+) " + // severity
           "([\\w\\.\\$]+) " + // class name
           "((?:[\\w]+=[\\w\\+/\\.\\$]+)(?:, (?:[\\w]+=[\\w\\+/\\.\\$]+))*)? " + // variables
-          "\\[[\\w\\.\\$\\(\\)]+\\] " + // thread ID
+          "\\[[\\w\\p{Punct}&&[^\\]]]+\\] " + // thread ID
           "(.+)" + // message
           "$"
   );

@@ -1,7 +1,8 @@
-package com.truward.brikar.log.util;
+package com.truward.brikar.log.standard;
 
 import com.truward.brikar.log.model.LogMessage;
 import com.truward.brikar.log.model.Severity;
+import com.truward.brikar.log.standard.camel.LogMessageProcessor;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -14,7 +15,7 @@ public final class LineParsingTest {
 
   private static final String MSG1 = "2015-07-24 23:21:16,942 INFO learn.LogProducerMain " +
           "oid=aJ0JLwgnBlw7+tbZ, rid=8tYCTFqDZfXJEzgD " +
-          "[learn.LogProducerMain.main()] Application started with args=[]";
+          "[qtp1965409981-14] Application started with args=[]";
 
   private static final String MSG2 = "2015-07-24 23:22:20,748 WARN learn.LogProducerMain  " +
           "[learn.LogProducerMain.main()] Operation timed out";
@@ -31,7 +32,7 @@ public final class LineParsingTest {
       "rid=KhnHxNK/BbLbaiH4 " +
       "[learn.LogProducerMain.main()] @metric tDelta=545, op=UserService.getUserById";
 
-  private final TestLogMessageProcessor processor = new TestLogMessageProcessor();
+  private final LogMessageProcessor processor = new LogMessageProcessor();
 
   @Test
   public void shouldMatchMsg1() {

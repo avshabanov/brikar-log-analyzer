@@ -1,4 +1,4 @@
-package com.truward.brikar.log.standard;
+package com.truward.brikar.log.standard.camel;
 
 import com.truward.brikar.log.camel.MalformedLineFilter;
 import com.truward.brikar.log.camel.MalformedLogMessageFilter;
