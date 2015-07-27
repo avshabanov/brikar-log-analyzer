@@ -27,7 +27,7 @@ public final class LogMessageProcessor implements Processor {
   public static final Pattern RECORD_PATTERN = Pattern.compile(
       "^(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2},\\d{3}) " + // date+time
           "(\\p{Upper}+) " + // severity
-          "([\\w\\.\\$]+) " + // class name
+          "([\\w\\p{Punct}]+) " + // class name
           "((?:[\\w]+=[\\w\\+/\\.\\$]+)(?:, (?:[\\w]+=[\\w\\+/\\.\\$]+))*)? " + // variables
           "\\[[\\w\\p{Punct}&&[^\\]]]+\\] " + // thread ID
           "(.+)" + // message
