@@ -16,3 +16,42 @@ Tenets:
 mvn clean install
 ```
 
+## Example endpoints
+
+Local elasticsearch cluster:
+
+```
+elasticsearch://local?operation=INDEX&&indexName=logs&indexType=logItem
+```
+
+Standard output:
+
+```
+stream:file?fileName=/dev/stdout
+```
+
+## How to start locally
+
+Unpack elasticsearch distribution on your localhost.
+
+Configure ``./config/elasticsearch.yml", add the following:
+
+```
+cluster.name: localhost
+```
+
+Start elasticsearch:
+
+```
+./bin/elasticsearch
+```
+
+Monitor logs, then do query:
+
+```
+curl -X GET 'http://127.0.0.1:9200/_search?q=severity:INFO&size=5&pretty=true'
+```
+
+```
+curl -X GET 'http://127.0.0.1:9200/_search?q=op:Greeting&size=5&pretty=true'
+```

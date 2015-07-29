@@ -101,18 +101,29 @@ public final class LogMessageProcessor implements Processor {
   //
 
   private void addAttributesFromMetrics(MaterializedLogMessage logMessage, String metricBody) {
-    final CommaSeparatedValueParser parser = new CommaSeparatedValueParser(metricBody);
-    final Map<String, String> vars = parser.readAsMap();
-    logMessage.putAllAttributes(vars);
+    putAllAttributes(logMessage, new CommaSeparatedValueParser(metricBody).readAsMap());
   }
 
   private void addAttributesFromVariables(MaterializedLogMessage logMessage, String variables) {
-    if (variables == null) {
-      return; // no variables
+    if (variables != null) {
+      putAllAttributes(logMessage, new CommaSeparatedValueParser(variables).readAsMap());
     }
+  }
 
-    final CommaSeparatedValueParser parser = new CommaSeparatedValueParser(variables);
-    final Map<String, String> vars = parser.readAsMap();
-    logMessage.putAllAttributes(vars);
+  private void putAllAttributes(MaterializedLogMessage logMessage, Map<String, String> vars) {
+    for (final Map.Entry<String, String> entry : vars.entrySet()) {
+      final String key = entry.getKey();
+      final Object value;
+      if (LogUtil.TIME_DELTA.equals(key)) {
+        value = Long.parseLong(entry.getValue());
+      } else if (LogUtil.COUNT.equals(key)) {
+        value = Long.parseLong(entry.getValue());
+      } else if (LogUtil.FAILED.equals(key)) {
+        value = Boolean.valueOf(entry.getValue());
+      } else {
+        value = entry.getValue();
+      }
+      logMessage.putAttribute(key, value);
+    }
   }
 }

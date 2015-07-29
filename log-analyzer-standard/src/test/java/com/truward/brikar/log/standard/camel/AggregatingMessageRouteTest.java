@@ -16,6 +16,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * Tests aggregating message route.
@@ -61,17 +62,13 @@ public final class AggregatingMessageRouteTest extends CamelTestSupport {
 
     // Then:
     resultEndpoint.assertIsSatisfied();
-    final LogMessage message1 = resultEndpoint.assertExchangeReceived(0).getIn().getBody(LogMessage.class);
-    final LogMessage message2 = resultEndpoint.assertExchangeReceived(1).getIn().getBody(LogMessage.class);
-    final LogMessage message3 = resultEndpoint.assertExchangeReceived(2).getIn().getBody(LogMessage.class);
+    final Map<?, ?> message1 = resultEndpoint.assertExchangeReceived(0).getIn().getBody(Map.class);
+    final Map<?, ?> message2 = resultEndpoint.assertExchangeReceived(1).getIn().getBody(Map.class);
+    final Map<?, ?> message3 = resultEndpoint.assertExchangeReceived(2).getIn().getBody(Map.class);
 
-    assertTrue(message1 instanceof MaterializedLogMessage);
-    assertTrue(message2 instanceof MaterializedLogMessage);
-    assertTrue(message3 instanceof MaterializedLogMessage);
-
-    assertEquals(Severity.INFO, message1.getSeverity());
-    assertEquals(Severity.WARN, message2.getSeverity());
-    assertEquals(Severity.ERROR, message3.getSeverity());
+    assertEquals("INFO", message1.get("severity"));
+    assertEquals("WARN", message2.get("severity"));
+    assertEquals("ERROR", message3.get("severity"));
   }
 
   @Override
@@ -84,6 +81,7 @@ public final class AggregatingMessageRouteTest extends CamelTestSupport {
             .process(new LogMessageProcessor())
             .aggregate(header("id"), new MultiLineAggregationStrategy()).completionInterval(200L)
             .filter(new MalformedLogMessageFilter())
+            .process(new LogMessageToMapProcessor())
             .to("mock:result");
       }
     };

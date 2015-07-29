@@ -101,18 +101,18 @@ public final class TestLogMessageProcessor implements Processor {
   //
 
   private void addAttributesFromMetrics(MaterializedLogMessage logMessage, String metricBody) {
-    final CommaSeparatedValueParser parser = new CommaSeparatedValueParser(metricBody);
-    final Map<String, String> vars = parser.readAsMap();
-    logMessage.putAllAttributes(vars);
+    putAllAttributes(logMessage, new CommaSeparatedValueParser(metricBody).readAsMap());
   }
 
   private void addAttributesFromVariables(MaterializedLogMessage logMessage, String variables) {
-    if (variables == null) {
-      return; // no variables
+    if (variables != null) {
+      putAllAttributes(logMessage, new CommaSeparatedValueParser(variables).readAsMap());
     }
+  }
 
-    final CommaSeparatedValueParser parser = new CommaSeparatedValueParser(variables);
-    final Map<String, String> vars = parser.readAsMap();
-    logMessage.putAllAttributes(vars);
+  private void putAllAttributes(MaterializedLogMessage logMessage, Map<String, String> vars) {
+    for (final Map.Entry<String, String> entry : vars.entrySet()) {
+      logMessage.putAttribute(entry.getKey(), entry.getValue());
+    }
   }
 }

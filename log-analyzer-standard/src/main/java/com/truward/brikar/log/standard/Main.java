@@ -4,6 +4,7 @@ import com.truward.brikar.log.camel.MalformedLineFilter;
 import com.truward.brikar.log.camel.MalformedLogMessageFilter;
 import com.truward.brikar.log.camel.MultiLineAggregationStrategy;
 import com.truward.brikar.log.standard.camel.LogMessageProcessor;
+import com.truward.brikar.log.standard.camel.LogMessageToMapProcessor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -55,7 +56,7 @@ public final class Main {
     });
 
     context.addRoutes(new MainRouteBuilder(args.getScanStreamDelay(), args.getSourceFileName(),
-        args.getMaxStacktraceSize(), args.getMaxStacktracePopulationTimeMillis()));
+        args.getMaxStacktraceSize(), args.getMaxStacktracePopulationTimeMillis(), args.getEndpoint()));
 
     try {
       context.start();
@@ -73,12 +74,15 @@ public final class Main {
     private final String fileName;
     private final int maxStacktraceSize;
     private final long maxStacktracePopulationTime;
+    private final String endpoint;
 
-    public MainRouteBuilder(long scanDelay, String fileName, int maxStacktraceSize, long maxStacktracePopulationTime) {
+    public MainRouteBuilder(long scanDelay, String fileName, int maxStacktraceSize, long maxStacktracePopulationTime,
+                            String endpoint) {
       this.scanDelay = scanDelay;
       this.fileName = fileName;
       this.maxStacktraceSize = maxStacktraceSize;
       this.maxStacktracePopulationTime = maxStacktracePopulationTime;
+      this.endpoint = endpoint;
     }
 
     @Override
@@ -92,7 +96,10 @@ public final class Main {
           .header("id").completionSize(maxStacktraceSize).completionInterval(maxStacktracePopulationTime)
 
           .filter(new MalformedLogMessageFilter())
-          .to("stream:file?fileName=/dev/stdout")
+
+          .process(new LogMessageToMapProcessor())
+
+          .to(endpoint)
       ;
     }
   }

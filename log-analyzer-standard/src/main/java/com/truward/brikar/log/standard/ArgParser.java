@@ -15,6 +15,7 @@ public final class ArgParser {
   public static final long DEFAULT_STOP_FILE_POLLING_DELAY_MILLIS = 1000L;
   public static final int DEFAULT_MAX_STACKTRACE_SIZE = 10000;
   public static final long DEFAULT_MAX_STACKTRACE_POPULATION_TIME_MILLIS = 200L;
+  public static final String DEFAULT_ENDPOINT = "stream:file?fileName=/dev/stdout";
 
   /**
    * Argument parsing result.
@@ -26,13 +27,15 @@ public final class ArgParser {
     private final long stopFilePollingDelayMillis;
     private final int maxStacktraceSize;
     private final long maxStacktracePopulationTimeMillis;
+    private final String endpoint;
 
     public Result(long scanStreamDelay,
                   String stopFileName,
                   String sourceFileName,
                   long stopFilePollingDelayMillis,
                   int maxStacktraceSize,
-                  long maxStacktracePopulationTimeMillis) {
+                  long maxStacktracePopulationTimeMillis,
+                  String endpoint) {
       if (sourceFileName == null) {
         throw new IllegalArgumentException("Source file name is missing");
       }
@@ -59,6 +62,7 @@ public final class ArgParser {
       this.stopFilePollingDelayMillis = stopFilePollingDelayMillis;
       this.maxStacktraceSize = maxStacktraceSize;
       this.maxStacktracePopulationTimeMillis = maxStacktracePopulationTimeMillis;
+      this.endpoint = Objects.requireNonNull(endpoint, "endpoint");
     }
 
     public long getScanStreamDelay() {
@@ -86,6 +90,11 @@ public final class ArgParser {
     public long getMaxStacktracePopulationTimeMillis() {
       return maxStacktracePopulationTimeMillis;
     }
+
+    @Nonnull
+    public String getEndpoint() {
+      return endpoint;
+    }
   }
 
   // state
@@ -98,6 +107,7 @@ public final class ArgParser {
   private long stopFilePollingDelayMillis = DEFAULT_STOP_FILE_POLLING_DELAY_MILLIS;
   private int maxStacktraceSize = DEFAULT_MAX_STACKTRACE_SIZE;
   private long maxStacktracePopulationTimeMillis = DEFAULT_MAX_STACKTRACE_POPULATION_TIME_MILLIS;
+  private String endpoint = DEFAULT_ENDPOINT;
 
 
   public ArgParser(@Nonnull String[] args) {
@@ -117,7 +127,7 @@ public final class ArgParser {
   @Nonnull
   public final Result getParseResult() {
     return new Result(scanStreamDelay, stopFileName, sourceFileName, stopFilePollingDelayMillis, maxStacktraceSize,
-        maxStacktracePopulationTimeMillis);
+        maxStacktracePopulationTimeMillis, endpoint);
   }
 
   //
@@ -166,6 +176,8 @@ public final class ArgParser {
   protected boolean parseCurrentArg(int pos) {
     if ("-f".equals(args[pos]) || "--file".equals(args[pos])) {
       sourceFileName = stringArgValue(pos, "Source File Name");
+    } else if ("-e".equals(args[pos]) || "--endpoint".equals(args[pos])) {
+      endpoint = stringArgValue(pos, "Endpoint");
     } else if ("--scan-delay".equals(args[pos])) {
       scanStreamDelay = intArgValue(pos, "Scan Delay");
     } else if ("--stop-file-name".equals(args[pos])) {
@@ -190,6 +202,10 @@ public final class ArgParser {
         "--file,-f {STRING}         Source file name.\n" +
         "                           This is the required value, it should contain\n" +
         "                           a path to the log file to analyze.\n" +
+
+        "--endpoint,-e {STRING}     Target camel endpoint.\n" +
+        "                           This is the required value, it should conform to\n" +
+        "                           Camel endpoint schemed, default value=" + DEFAULT_ENDPOINT + "\n" +
 
         "--scan-delay {NUMBER}      Time in milliseconds for scanning source file name for changes,\n" +
         "                           default value=" + DEFAULT_SCAN_STREAM_DELAY_MILLIS + '\n' +

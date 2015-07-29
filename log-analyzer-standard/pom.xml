@@ -35,6 +35,13 @@
       <artifactId>log-analyzer-core</artifactId>
     </dependency>
 
+    <!-- Camel Elasticsearch -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-elasticsearch</artifactId>
+      <version>${camel.version}</version>
+    </dependency>
+
     <!-- FindBugs annotations -->
     <dependency>
       <groupId>com.google.code.findbugs</groupId>

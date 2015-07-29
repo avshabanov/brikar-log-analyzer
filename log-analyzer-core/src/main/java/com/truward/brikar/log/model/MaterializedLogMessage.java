@@ -1,6 +1,7 @@
 package com.truward.brikar.log.model;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -48,8 +49,8 @@ public final class MaterializedLogMessage extends LogMessage {
     this.lines.add(value);
   }
 
-  public void putAllAttributes(@Nonnull Map<String, ?> values) {
-    this.attributes.putAll(values);
+  public void putAttribute(@Nonnull String key, @Nullable Object value) {
+    this.attributes.put(key, value);
   }
 
   @Override
